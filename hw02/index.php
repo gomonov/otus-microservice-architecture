@@ -2,7 +2,7 @@
 
 header('Content-Type: application/json');
 
-if ('GET' === $_SERVER['REQUEST_METHOD'] && '/health/' === ($_SERVER['PATH_INFO'] ?? '')) {
+if ('GET' === $_SERVER['REQUEST_METHOD'] && 'health' === trim(($_SERVER['PATH_INFO'] ?? ''), '/')) {
     try {
         $data = json_encode(['status' => 'OK'], JSON_THROW_ON_ERROR);
     } catch (JsonException $e) {
