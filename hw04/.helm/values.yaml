@@ -1,0 +1,26 @@
+app:
+  name: app
+  replicaCount: 1
+  image: ygomonov/otus-microservice-architecture:hw04
+  env: prod
+  port: 8000
+  service:
+    port: 80
+    type: ClusterIP
+
+secrets:
+  dsn: cG9zdGdyZXNxbDovL2FwcDohQ2hhbmdlTWUhQGFwcC1wb3N0Z3Jlcy1wb3N0Z3Jlc3FsLmFwcC5zdmMuY2x1c3Rlci5sb2NhbDo1NDMyL2FwcD9zZXJ2ZXJWZXJzaW9uPTE2JmNoYXJzZXQ9dXRmOA==
+  app_secret: OWI3OWFhNzA0NzU3M2MxZDZhYjQxMWJmMTE0YWE4NWU=
+  #postgresql://app:!ChangeMe!@app-postgres-postgresql.app.svc.cluster.local:5432/app?serverVersion=16&charset=utf8
+ingress:
+  className: nginx
+  hosts:
+    - host: arch.homework
+      paths:
+        - path: /
+          pathType: Prefix
+
+migrationJob:
+  restartPolicy: Never
+  backoffLimit: 10
+  ttlSecondsAfterFinished: 60

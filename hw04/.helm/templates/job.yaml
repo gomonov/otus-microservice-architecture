@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.app.name }}-migration
+spec:
+  template:
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}-migration
+          imagePullPolicy: Always
+          image: {{ .Values.app.image }}
+          command: [ '/bin/sh', '-c', 'bin/console d:m:m' ]
+          env:
+            - name: APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.app.name }}-secret
+                  key: app_secret
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.app.name }}-secret
+                  key: dsn
+            - name: APP_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.app.name }}-config-map
+                  key: app_env
+      restartPolicy: {{ .Values.migrationJob.restartPolicy }}
+  backoffLimit: {{ .Values.migrationJob.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.migrationJob.ttlSecondsAfterFinished }}
