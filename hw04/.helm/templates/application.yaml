@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      containers:
+      - name: {{ .Values.app.name }}
+        image: {{ .Values.app.image }}
+        imagePullPolicy: Always
+        env:
+          - name: APP_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.app.name }}-secret
+                key: app_secret
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.app.name }}-secret
+                key: dsn
+          - name: APP_ENV
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.app.name }}-config-map
+                key: app_env
+        ports:
+        - containerPort: {{ .Values.app.port }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.app.name }}-service
+spec:
+  selector:
+    app: {{ .Values.app.name }}
+  ports:
+    - port: {{ .Values.app.service.port }}
+      protocol: TCP
+      targetPort: {{ .Values.app.port }}
+  type: {{ .Values.app.service.type }}
+
+---
+{{- $appName := .Values.app.name }}
+{{- $service := .Values.app.service }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.app.name }}-ingress
+  labels:
+    name: {{ .Values.app.name }}-ingress
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+        {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $appName }}-service
+                port:
+                  number: {{ $service.port }}
+        {{- end }}
+    {{- end }}
