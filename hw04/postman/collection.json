@@ -1,0 +1,70 @@
+{
+	"info": {
+		"_postman_id": "7c6c477c-eff5-48f2-b1e0-8fb87010cb9f",
+		"name": "hw04",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "30626594"
+	},
+	"item": [
+		{
+			"name": "User create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"phone\": 7910000000,\n  \"username\": \"username\",\n  \"firstName\": \"firstName\",\n  \"lastName\": \"lastName\",\n  \"email\": \"email@mail.ri\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/api/v1/user/create"
+			},
+			"response": []
+		},
+		{
+			"name": "User view",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{base_url}}/api/v1/user/1"
+			},
+			"response": []
+		},
+		{
+			"name": "User edit",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"email@mail.ru\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/api/v1/user/1"
+			},
+			"response": []
+		},
+		{
+			"name": "User delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "{{base_url}}/api/v1/user/1"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://arch.homework"
+		}
+	]
+}
