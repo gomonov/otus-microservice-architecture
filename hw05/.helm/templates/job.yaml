@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.app.name }}-migration
+  annotations:
+    "helm.sh/hook": post-install, post-upgrade
+spec:
+  template:
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}-migration
+          imagePullPolicy: Always
+          image: "{{ .Values.app.image }}:{{ .Values.app.tag }}"
+          command: [ '/bin/sh', '-c', 'composer install --no-dev && bin/console d:m:m  --no-interaction' ]
+          volumeMounts:
+            - name: env-config
+              mountPath: '/var/www/.env.local'
+              subPath: '.env.local'
+
+      volumes:
+        - name: env-config
+          configMap:
+            name: {{ .Values.app.name }}-config-map
+
+      restartPolicy: {{ .Values.migrationJob.restartPolicy }}
+  backoffLimit: {{ .Values.migrationJob.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.migrationJob.ttlSecondsAfterFinished }}
