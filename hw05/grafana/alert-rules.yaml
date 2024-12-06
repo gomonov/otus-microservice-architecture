@@ -1,0 +1,650 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: 1m
+      folder: Alerts
+      interval: 1m
+      rules:
+        - uid: ee64wchjri1ogb
+          title: Error rate 5XX
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: sum(rate(app_http_5xx_responses_total{action!="all"}[1m])) by(action)
+                interval: ""
+                intervalMs: 30000
+                legendFormat: '{{action}}'
+                maxDataPoints: 43200
+                range: true
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: max
+                refId: B
+                type: reduce
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 1.5
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: B
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: ee60v8h6nq2v4c
+          panelId: 6
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
+          annotations:
+            __dashboardUid__: ee60v8h6nq2v4c
+            __panelId__: "6"
+          isPaused: false
+          notification_settings:
+            receiver: Telegram
+        - uid: de64x0cljdx4we
+          title: Latency POST-user_create, ms.
+          condition: F
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(0.5, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="POST-user_create"}[1m])))
+                interval: ""
+                intervalMs: 30000
+                legendFormat: 0.5 квантиль
+                maxDataPoints: 43200
+                range: true
+                refId: A
+            - refId: B
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(0.95, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="POST-user_create"}[1m])))
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: 0.95 квантиль
+                maxDataPoints: 43200
+                range: true
+                refId: B
+            - refId: C
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(0.99, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="POST-user_create"}[1m])))
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: 0.99 квантиль
+                maxDataPoints: 43200
+                range: true
+                refId: C
+            - refId: D
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(1, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="POST-user_create"}[1m])))
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: max
+                maxDataPoints: 43200
+                range: true
+                refId: D
+            - refId: E
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - E
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: D
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: max
+                refId: E
+                type: reduce
+            - refId: F
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0.8
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - F
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: E
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: F
+                type: threshold
+          dashboardUid: ee60v8h6nq2v4c
+          panelId: 2
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
+          annotations:
+            __dashboardUid__: ee60v8h6nq2v4c
+            __panelId__: "2"
+          isPaused: false
+          notification_settings:
+            receiver: Telegram
+        - uid: be64x2x2f2i9sd
+          title: Latency GET-user_get, ms.
+          condition: F
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(0.5, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="GET-user_get"}[1m])))
+                interval: ""
+                intervalMs: 30000
+                legendFormat: 0.5 квантиль
+                maxDataPoints: 43200
+                range: true
+                refId: A
+            - refId: B
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(0.95, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="GET-user_get"}[1m])))
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: 0.95 квантиль
+                maxDataPoints: 43200
+                range: true
+                refId: B
+            - refId: C
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(0.99, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="GET-user_get"}[1m])))
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: 0.99 квантиль
+                maxDataPoints: 43200
+                range: true
+                refId: C
+            - refId: D
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(1, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="GET-user_get"}[1m])))
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: max
+                maxDataPoints: 43200
+                range: true
+                refId: D
+            - refId: E
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - E
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: D
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: max
+                refId: E
+                type: reduce
+            - refId: F
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0.8
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - F
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: E
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: F
+                type: threshold
+          dashboardUid: ee60v8h6nq2v4c
+          panelId: 1
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
+          annotations:
+            __dashboardUid__: ee60v8h6nq2v4c
+            __panelId__: "1"
+          isPaused: false
+          notification_settings:
+            receiver: Telegram
+        - uid: be64xazq386wwb
+          title: Latency PUT-user_update, ms.
+          condition: F
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(0.5, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="PUT-user_update"}[1m])))
+                interval: ""
+                intervalMs: 30000
+                legendFormat: 0.5 квантиль
+                maxDataPoints: 43200
+                range: true
+                refId: A
+            - refId: B
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(0.95, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="PUT-user_update"}[1m])))
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: 0.95 квантиль
+                maxDataPoints: 43200
+                range: true
+                refId: B
+            - refId: C
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(0.99, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="PUT-user_update"}[1m])))
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: 0.99 квантиль
+                maxDataPoints: 43200
+                range: true
+                refId: C
+            - refId: D
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(1, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="PUT-user_update"}[1m])))
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: max
+                maxDataPoints: 43200
+                range: true
+                refId: D
+            - refId: E
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - E
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: D
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: max
+                refId: E
+                type: reduce
+            - refId: F
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0.8
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - F
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: E
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: F
+                type: threshold
+          dashboardUid: ee60v8h6nq2v4c
+          panelId: 3
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
+          annotations:
+            __dashboardUid__: ee60v8h6nq2v4c
+            __panelId__: "3"
+          isPaused: false
+          notification_settings:
+            receiver: Telegram
+        - uid: ce64ygg2adc00f
+          title: Latency DELETE-user_delete, ms.
+          condition: F
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(0.5, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="DELETE-user_delete"}[1m])))
+                interval: ""
+                intervalMs: 30000
+                legendFormat: 0.5 квантиль
+                maxDataPoints: 43200
+                range: true
+                refId: A
+            - refId: B
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(0.95, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="DELETE-user_delete"}[1m])))
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: 0.95 квантиль
+                maxDataPoints: 43200
+                range: true
+                refId: B
+            - refId: C
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(0.99, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="DELETE-user_delete"}[1m])))
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: 0.99 квантиль
+                maxDataPoints: 43200
+                range: true
+                refId: C
+            - refId: D
+              relativeTimeRange:
+                from: 1800
+                to: 0
+              datasourceUid: prometheus
+              model:
+                adhocFilters: []
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: histogram_quantile(1, sum by(le) (rate(app_request_durations_histogram_seconds_bucket{action="DELETE-user_delete"}[1m])))
+                instant: false
+                interval: ""
+                intervalMs: 30000
+                legendFormat: max
+                maxDataPoints: 43200
+                range: true
+                refId: D
+            - refId: E
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - E
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: max
+                refId: E
+                type: reduce
+            - refId: F
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0.8
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - F
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: E
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: F
+                type: threshold
+          dashboardUid: ee60v8h6nq2v4c
+          panelId: 4
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
+          annotations:
+            __dashboardUid__: ee60v8h6nq2v4c
+            __panelId__: "4"
+          isPaused: false
+          notification_settings:
+            receiver: Telegram

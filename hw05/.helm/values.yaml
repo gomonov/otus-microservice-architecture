@@ -1,0 +1,78 @@
+app:
+  name: app
+  replicaCount: 3
+  image: ygomonov/otus-microservice-architecture
+  tag: hw05
+  appSecret: f975d3f7d9081bc041a6bd9d66175e38
+
+nginx:
+  name: nginx
+  image: nginx:latest
+  portName: nginx-port
+  port: 80
+
+service:
+  type: ClusterIP
+  ports:
+    - name: api
+      port: 80
+      targetPort: nginx-port
+
+serviceMonitor:
+  endpoints:
+    - port: api
+      path: /metrics
+      interval: 30s
+
+ingress:
+  className: nginx
+  hosts:
+    - host: arch.homework
+      paths:
+        - path: /
+          pathType: Prefix
+          port: 80
+
+migrationJob:
+  restartPolicy: Never
+  backoffLimit: 10
+  ttlSecondsAfterFinished: 60
+
+global:
+  postgresql:
+    auth:
+      postgresPassword: "!ChangeMe!"
+      username: "app"
+      password: "!ChangeMe!"
+      database: "app"
+    service:
+      ports:
+        postgresql: "5432"
+
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      serviceMonitorSelectorNilUsesHelmValues: false
+      podMonitorSelectorNilUsesHelmValues: false
+      serviceMonitorSelector: {}
+
+
+ingress-nginx:
+  controller:
+    kind: DaemonSet
+    reportNodeInternalIp: true
+    hostPort:
+      enabled: true
+    service:
+      type: NodePort
+    metrics:
+      enabled: true
+      podAnnotations: {
+        prometheus.io/port: "10254",
+        prometheus.io/scrape: "true"
+      }
+      serviceMonitor:
+        enabled: true
+        additionalLabels: {
+          release: "true"
+        }
