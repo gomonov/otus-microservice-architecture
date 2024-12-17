@@ -1,0 +1,111 @@
+{
+	"info": {
+		"_postman_id": "7c6c477c-eff5-48f2-b1e0-8fb87010cb9f",
+		"name": "hw04",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "30626594"
+	},
+	"item": [
+		{
+			"name": "User create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.collectionVariables.set(\"userId\", jsonData.data.id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"phone\": 7910000000,\n  \"username\": \"username\",\n  \"firstName\": \"firstName\",\n  \"lastName\": \"lastName\",\n  \"email\": \"email@mail.ri\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseUrl}}/api/v1/user/create"
+			},
+			"response": []
+		},
+		{
+			"name": "User view",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{baseUrl}}/api/v1/user/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "User edit",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"email@mail.ru\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseUrl}}/api/v1/user/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "User delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "{{baseUrl}}/api/v1/user/{{userId}}"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "arch.homework",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
