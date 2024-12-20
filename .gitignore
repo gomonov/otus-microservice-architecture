@@ -1,1 +1,3 @@
-/.idea/
+.idea
+app-auth/.idea
+app-user/.idea

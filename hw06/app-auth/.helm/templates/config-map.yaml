@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.app.name }}-config-map
+data:
+  .env.local: |
+    APP_SECRET={{ .Values.app.appSecret }}
+    JWT_SECRET={{ .Values.app.appSecret }}
+    DATABASE_URL={{ printf "postgresql://%s:%s@app-db-postgresql.%s.svc.cluster.local:%s/%s?serverVersion=16&charset=utf8"
+      .Values.app.postgresql.username
+      .Values.app.postgresql.password
+      .Release.Namespace
+      .Values.app.postgresql.port
+      .Values.app.postgresql.db }}
+    REDIS_HOST={{ printf "app-redis-master.%s.svc.cluster.local" .Release.Namespace }}
+    REDIS_PORT={{ .Values.app.redis.port }}
+    REDIS_PASSWORD={{ .Values.app.redis.password }}
+    REDIS_SESSION_DB={{ .Values.app.redis.session_db }}
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Values.nginx.name }}-config-map
+data:
+  app.conf: |
+    server {
+      listen 80;
+      index index.php;
+      error_log /var/log/nginx/error.log;
+      access_log /var/log/nginx/access.log;
+      root /var/www/public;
+
+      client_max_body_size 128m;
+
+      location / {
+        try_files $uri $uri/ /index.php?$args;
+      }
+
+      location ~ \.php$ {
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+      }
+    }
