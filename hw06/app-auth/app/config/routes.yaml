@@ -1,0 +1,15 @@
+# Пользователь
+user_auth:
+    path: /api/v1/auth
+    controller: App\UI\User\Controller\Auth\Controller
+    methods: GET
+
+user_login:
+    path: /api/v1/login
+    controller: App\UI\User\Controller\Login\Controller
+    methods: POST
+
+healthcheck:
+    path: /health
+    controller: App\UI\HealthCheck\Controller
+    methods: GET
