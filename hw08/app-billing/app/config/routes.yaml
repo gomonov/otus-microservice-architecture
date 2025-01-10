@@ -1,0 +1,19 @@
+account_get:
+    path: /api/v1/account/{userId<\d+>}
+    controller: App\UI\Account\Controller\Get\Controller
+    methods: GET
+
+account_top_up:
+    path: /api/v1/account/top-up/{userId<\d+>}
+    controller: App\UI\Account\Controller\TopUp\Controller
+    methods: PUT
+
+account_pay:
+    path: /api/v1/account/pay/{userId<\d+>}
+    controller: App\UI\Account\Controller\Pay\Controller
+    methods: PUT
+
+healthcheck:
+    path: /health
+    controller: App\UI\HealthCheck\Controller
+    methods: GET

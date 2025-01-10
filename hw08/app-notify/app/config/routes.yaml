@@ -1,0 +1,9 @@
+notification_get:
+    path: /api/v1/notification/{userId<\d+>}
+    controller: App\UI\Notification\Controller\Get\Controller
+    methods: GET
+
+healthcheck:
+    path: /health
+    controller: App\UI\HealthCheck\Controller
+    methods: GET
