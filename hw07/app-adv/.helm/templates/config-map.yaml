@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.app.name }}-config-map
+data:
+  .env.local: |
+    APP_ENV=prod
+    APP_SECRET={{ .Values.app.appSecret }}
+    JWT_SECRET={{ .Values.app.appSecret }}
+    DATABASE_URL={{ printf "postgresql://%s:%s@app-db-postgresql.%s.svc.cluster.local:%s/%s?serverVersion=16&charset=utf8"
+      .Values.app.postgresql.username
+      .Values.app.postgresql.password
+      .Release.Namespace
+      .Values.app.postgresql.port
+      .Values.app.postgresql.db }}
+    REDIS_HOST={{ printf "app-redis-master.%s.svc.cluster.local" .Release.Namespace }}
+    REDIS_PORT={{ .Values.app.redis.port }}
+    REDIS_PASSWORD={{ .Values.app.redis.password }}
+    REDIS_SESSION_DB={{ .Values.app.redis.session_db }}
+    KAFKA_BROKER_LIST="app-kafka.app.svc.cluster.local:9092"
+    LOCK_DSN={{ printf "redis://%s@app-redis-master.%s.svc.cluster.local:%s/%s" .Values.app.redis.password .Release.Namespace .Values.app.redis.port .Values.app.redis.lock_db}}
+
+    APP_BILLING_HOST={{ .Values.app.billingHost | quote }}

@@ -1,0 +1,6 @@
+global:
+  postgresql:
+    auth:
+      postgresPassword: "!ChangeMe!"
+      username: "user"
+      password: "!ChangeMe!"

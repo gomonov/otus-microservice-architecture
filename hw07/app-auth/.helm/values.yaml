@@ -1,0 +1,35 @@
+app:
+  name: app-auth
+  replicaCount: 3
+  image: ygomonov/otus-app-auth
+  tag: hw07
+  appSecret: f975d3f7d9081bc041a6bd9d66175e38
+  postgresql:
+    username: "user"
+    password: "!ChangeMe!"
+    port: "5432"
+    db: app-user
+  redis:
+    port: 6379
+    password: "redis-pass"
+    session_db: 10
+  portName: app-auth-port
+  port: 8002
+
+service:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: app-auth-port
+
+ingress:
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  hosts:
+    - host: arch.homework
+      paths:
+        - path: /app-auth(/|$)(.*)
+          pathType: ImplementationSpecific
+          port: 80
