@@ -12,9 +12,9 @@ interface BonusModelInterface
 
     public function setUserId(int $userId): static;
 
-    public function getBalance(): int;
+    public function getBonus(): int;
 
-    public function setBalance(int $balance): static;
+    public function setBonus(int $bonus): static;
 
     public function getCreatedAt(): DateTime;
 

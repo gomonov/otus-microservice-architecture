@@ -3,13 +3,13 @@ bonus_get:
     controller: App\UI\Bonus\Controller\Get\Controller
     methods: GET
 
-bonus_top_up:
-    path: /api/v1/bonus/top-up/{userId<\d+>}
+bonus_debit:
+    path: /api/v1/bonus/debit/{userId<\d+>}
     controller: App\UI\Bonus\Controller\Debit\Controller
     methods: PUT
 
-bonus_pay:
-    path: /api/v1/bonus/pay/{userId<\d+>}
+bonus_credit:
+    path: /api/v1/bonus/credit/{userId<\d+>}
     controller: App\UI\Bonus\Controller\Credit\Controller
     methods: PUT
 

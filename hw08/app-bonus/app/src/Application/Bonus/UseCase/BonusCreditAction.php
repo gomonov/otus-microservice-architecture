@@ -32,12 +32,12 @@ readonly class BonusCreditAction
             throw new BonusException('Бонусный счёт для пользователя не найден');
         }
 
-        if ($data->getSum() > $bonus->getBalance()) {
+        if ($data->getSum() > $bonus->getBonus()) {
             $this->entityStorageService->rollbackTransaction();
             throw new BonusException('Недостаточно средств на бонусном счёте');
         }
 
-        $bonus->setBalance($bonus->getBalance() - $data->getSum());
+        $bonus->setBonus($bonus->getBonus() - $data->getSum());
 
         $this->entityStorageService->flush();
         $this->entityStorageService->commitTransaction();

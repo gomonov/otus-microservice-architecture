@@ -20,7 +20,7 @@ RUN cd /tmp \
 
 RUN docker-php-ext-install pdo pdo_pgsql
 RUN pecl install redis && docker-php-ext-enable redis
-RUN  pecl install rdkafka && docker-php-ext-enable rdkafka
+RUN pecl install rdkafka && docker-php-ext-enable rdkafka
 RUN docker-php-ext-configure pcntl --enable-pcntl  && docker-php-ext-install pcntl
 
 RUN wget https://getcomposer.org/installer -O - -q | php -- --install-dir=/bin --filename=composer --quiet

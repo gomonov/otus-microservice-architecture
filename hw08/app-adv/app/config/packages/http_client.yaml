@@ -7,3 +7,7 @@ framework:
         base_uri: '%env(APP_BILLING_HOST)%'
         headers:
           Content-Type: 'application/json'
+      app.bonus.client:
+        base_uri: '%env(APP_BONUS_HOST)%'
+        headers:
+          Content-Type: 'application/json'

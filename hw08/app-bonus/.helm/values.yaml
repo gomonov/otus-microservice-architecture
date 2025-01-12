@@ -14,7 +14,7 @@ app:
     password: "redis-pass"
     session_db: 10
   portName: app-bonus-port
-  port: 8003
+  port: 8006
 
 service:
   type: ClusterIP

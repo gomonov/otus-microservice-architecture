@@ -15,6 +15,7 @@ app:
     session_db: 10
     lock_db: "15"
   billingHost: http://app-billing-service.app.svc.cluster.local
+  bonusHost: http://app-bonus-service.app.svc.cluster.local
   portName: app-adv-port
   port: 8004
 

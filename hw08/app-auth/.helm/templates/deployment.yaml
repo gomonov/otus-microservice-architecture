@@ -29,6 +29,10 @@ spec:
           ports:
             - name: {{ .Values.app.portName }}
               containerPort: {{ .Values.app.port }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.app.portName }}
 
       volumes:
         - name: app-auth-cache-volume

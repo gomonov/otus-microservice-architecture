@@ -32,7 +32,7 @@ readonly class BonusDebitAction
             throw new BonusException('Бонусный счёт для пользователя не найден');
         }
 
-        $bonus->setBalance($bonus->getBalance() + $data->getSum());
+        $bonus->setBonus($bonus->getBonus() + $data->getSum());
 
         $this->entityStorageService->flush();
         $this->entityStorageService->commitTransaction();

@@ -21,3 +21,4 @@ data:
     LOCK_DSN={{ printf "redis://%s@app-redis-master.%s.svc.cluster.local:%s/%s" .Values.app.redis.password .Release.Namespace .Values.app.redis.port .Values.app.redis.lock_db}}
 
     APP_BILLING_HOST={{ .Values.app.billingHost | quote }}
+    APP_BONUS_HOST={{ .Values.app.bonusHost | quote }}

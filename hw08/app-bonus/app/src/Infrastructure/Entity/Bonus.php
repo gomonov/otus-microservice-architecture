@@ -25,7 +25,7 @@ class Bonus implements BonusModelInterface
     private ?int $userId = null;
 
     #[ORM\Column]
-    private ?int $balance = 0;
+    private ?int $bonus = 0;
 
     public function getId(): ?int
     {
@@ -44,14 +44,14 @@ class Bonus implements BonusModelInterface
         return $this;
     }
 
-    public function getBalance(): int
+    public function getBonus(): int
     {
-        return $this->balance;
+        return $this->bonus;
     }
 
-    public function setBalance(int $balance): static
+    public function setBonus(int $bonus): static
     {
-        $this->balance = $balance;
+        $this->bonus = $bonus;
 
         return $this;
     }

@@ -1,12 +1,15 @@
-## Схема взаимодействия
-![schema.png](schema.png)
-Использовал событийное взаимодействие с использованием брокера сообщений для нотификаций и создания счёта пользователя после успешной регистрации
+## Сценарий создания платного объявления
+1. В сервисе "bonus" создаём запись о начисленных бонусах
+2. В сервисе "billing" проводим платёж
+3. Сохраняем объявление в сервисе "adv"
+
+### Для реализации использован паттерн saga, основанный на оркестрации
 
 ## Коллекция postman
 
 ### Запуск тестов
 ![newman.png](newman.png)
-
+![newman_total.png](newman_total.png)
 ```shell
 newman run postman/collection.json
 ```
@@ -35,6 +38,7 @@ helm upgrade --install app-kafka oci://registry-1.docker.io/bitnamicharts/kafka 
 helm upgrade --install app-user ./app-user/.helm/ -n app
 helm upgrade --install app-auth ./app-auth/.helm/ -n app
 helm upgrade --install app-billing ./app-billing/.helm/ -n app
+helm upgrade --install app-bonus ./app-bonus/.helm/ -n app
 helm upgrade --install app-adv ./app-adv/.helm/ -n app
 helm upgrade --install app-notify ./app-notify/.helm/ -n app
 ```
@@ -44,6 +48,7 @@ helm upgrade --install app-notify ./app-notify/.helm/ -n app
   helm uninstall app-user -n app
   helm uninstall app-auth -n app
   helm uninstall app-billing -n app
+  helm uninstall app-bonus -n app
   helm uninstall app-adv -n app
   helm uninstall app-notify -n app
   helm uninstall app-db -n app
