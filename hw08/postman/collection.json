@@ -1,0 +1,611 @@
+{
+	"info": {
+		"_postman_id": "c0b99302-21ec-4f4f-be09-34374babc7d7",
+		"name": "hw08",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "30626594"
+	},
+	"item": [
+		{
+			"name": "User registration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful user registration\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.collectionVariables.set(\"userId\", pm.response.json().data.id);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"phone\": 7910000000,\n  \"username\": \"username\",\n  \"password\": \"password\",\n  \"firstName\": \"firstName\",\n  \"lastName\": \"lastName\",\n  \"email\": \"email@mail.ru1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{userBaseUrl}}/api/v1/user/create"
+			},
+			"response": []
+		},
+		{
+			"name": "User login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successfull login \", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"username\",\n  \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{authBaseUrl}}/api/v1/login"
+			},
+			"response": []
+		},
+		{
+			"name": "User auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successfull auth \", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.collectionVariables.set(\"token\", pm.response.headers.get('X-Auth-Token'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{authBaseUrl}}/api/v1/auth"
+			},
+			"response": []
+		},
+		{
+			"name": "Check account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check account\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data.balance).to.eql(~~pm.collectionVariables.get('balance'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function sleep(ms) {",
+							"  return new Promise(resolve => setTimeout(resolve, ms));",
+							"}",
+							"sleep(300);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{billingBaseUrl}}/api/v1/account/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Check bonus",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check bonus\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data.bonus).to.eql(~~pm.collectionVariables.get('bonus'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function sleep(ms) {",
+							"  return new Promise(resolve => setTimeout(resolve, ms));",
+							"}",
+							"sleep(300);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{bonusBaseUrl}}/api/v1/bonus/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Top up account 500",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful top up account \", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data.balance).to.eql(~~pm.collectionVariables.get('balance'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"balance\", pm.collectionVariables.get(\"balance\") + 500);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sum\": 500\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{billingBaseUrl}}/api/v1/account/top-up/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Create advertisement (300)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Sucessfull create advertisement\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"advText\", \"test \".repeat(60));",
+							"pm.collectionVariables.set(\"balance\", pm.collectionVariables.get(\"balance\") - pm.collectionVariables.get(\"advText\").length);",
+							"pm.collectionVariables.set(\"bonus\", pm.collectionVariables.get(\"bonus\") + pm.collectionVariables.get(\"advText\").length);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Заголовок объявления\",\n  \"text\": \"{{advText}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{advBaseUrl}}/api/v1/adv/create"
+			},
+			"response": []
+		},
+		{
+			"name": "Check account 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check account\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data.balance).to.eql(~~pm.collectionVariables.get('balance'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{billingBaseUrl}}/api/v1/account/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Check bonus 300",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check bonus\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data.bonus).to.eql(~~pm.collectionVariables.get('bonus'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{bonusBaseUrl}}/api/v1/bonus/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Check success notifications",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check success notifications\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data[0].text).to.eql(\"Объявление на сумму 300 успешно оплачено\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{notifyBaseUrl}}/api/v1/notification/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Create advertisement (300 error)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Error create advertisement\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"advText\", \"test \".repeat(60));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Заголовок объявления\",\n  \"text\": \"{{advText}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{advBaseUrl}}/api/v1/adv/create"
+			},
+			"response": []
+		},
+		{
+			"name": "Check account 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check account\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data.balance).to.eql(~~pm.collectionVariables.get('balance'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{billingBaseUrl}}/api/v1/account/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Check bonus 300",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check bonus\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data.bonus).to.eql(~~pm.collectionVariables.get('bonus'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{bonusBaseUrl}}/api/v1/bonus/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Check error notifications",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check success notifications\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data[1].text).to.eql(\"Ошибка выполнения платежа\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{notifyBaseUrl}}/api/v1/notification/{{userId}}"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "userBaseUrl",
+			"value": "http://arch.homework/app-user",
+			"type": "string"
+		},
+		{
+			"key": "authBaseUrl",
+			"value": "http://arch.homework/app-auth",
+			"type": "string"
+		},
+		{
+			"key": "billingBaseUrl",
+			"value": "http://arch.homework/app-billing",
+			"type": "string"
+		},
+		{
+			"key": "advBaseUrl",
+			"value": "http://arch.homework/app-adv",
+			"type": "string"
+		},
+		{
+			"key": "notifyBaseUrl",
+			"value": "http://arch.homework/app-notify",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "advText",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "balance",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "bonusBaseUrl",
+			"value": "http://arch.homework/app-bonus",
+			"type": "string"
+		},
+		{
+			"key": "bonus",
+			"value": "0",
+			"type": "string"
+		}
+	]
+}
