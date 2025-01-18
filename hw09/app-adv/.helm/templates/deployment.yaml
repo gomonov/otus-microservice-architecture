@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}
+          image: "{{ .Values.app.image }}:{{ .Values.app.tag }}"
+          imagePullPolicy: Always
+          lifecycle:
+            postStart:
+              exec:
+                command: ['/bin/sh', '-c', 'composer install --no-dev']
+          volumeMounts:
+            - name: app-adv-env-config
+              mountPath: '/var/www/.env.local'
+              subPath: '.env.local'
+            - name: app-adv-cache-volume
+              mountPath: '/var/www/var/'
+          ports:
+            - name: {{ .Values.app.portName }}
+              containerPort: {{ .Values.app.port }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.app.portName }}
+
+      volumes:
+        - name: app-adv-cache-volume
+          emptyDir: {}
+        - name: app-adv-env-config
+          configMap:
+            name: {{ .Values.app.name }}-config-map

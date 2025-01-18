@@ -1,0 +1,19 @@
+user_create:
+    path: /api/v1/user/create
+    controller: App\UI\User\Controller\Create\Controller
+    methods: POST
+
+user_get:
+    path: /api/v1/user/{userId<\d+>}
+    controller: App\UI\User\Controller\Get\Controller
+    methods: GET
+
+user_update:
+    path: /api/v1/user/{userId<\d+>}
+    controller: App\UI\User\Controller\Update\Controller
+    methods: PUT
+
+healthcheck:
+    path: /health
+    controller: App\UI\HealthCheck\Controller
+    methods: GET

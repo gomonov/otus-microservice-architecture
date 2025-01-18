@@ -1,0 +1,4 @@
+adv_create:
+    path: /api/v1/adv/create
+    controller: App\UI\Advertisement\Controller\Create\Controller
+    methods: POST

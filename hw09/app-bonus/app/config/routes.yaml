@@ -1,0 +1,19 @@
+bonus_get:
+    path: /api/v1/bonus/{userId<\d+>}
+    controller: App\UI\Bonus\Controller\Get\Controller
+    methods: GET
+
+bonus_debit:
+    path: /api/v1/bonus/debit/{userId<\d+>}
+    controller: App\UI\Bonus\Controller\Debit\Controller
+    methods: PUT
+
+bonus_credit:
+    path: /api/v1/bonus/credit/{userId<\d+>}
+    controller: App\UI\Bonus\Controller\Credit\Controller
+    methods: PUT
+
+healthcheck:
+    path: /health
+    controller: App\UI\HealthCheck\Controller
+    methods: GET
