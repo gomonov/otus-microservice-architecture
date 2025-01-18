@@ -27,4 +27,12 @@ interface AdvertisementModelInterface
     public function getCreatedAt(): DateTime;
 
     public function getUpdatedAt(): DateTime;
+
+    public function getIdempotencyKey(): string;
+
+    public function setIdempotencyKey(string $idempotencyKey): static;
+
+    public function getStatus(): AdvertisementStatusEnum;
+
+    public function setStatus(AdvertisementStatusEnum $status): static;
 }

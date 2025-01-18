@@ -1,10 +1,10 @@
 <?php
 
-namespace App\UI\Bonus\Controller\Credit;
+namespace App\UI\Bonus\Controller\Rollback;
 
-use App\Application\Bonus\UseCase\BonusCreditAction;
+use App\Application\Bonus\UseCase\BonusRollbackAction;
 use App\Application\Exception\AbstractApplicationException;
-use App\UI\Bonus\Controller\Dto\BonusChangeDto;
+use App\UI\Bonus\Controller\Rollback\Dto\BonusRollbackDto;
 use App\UI\Bonus\Dto\BonusOutputData;
 use App\UI\Service\Auth\AuthService;
 use App\UI\Service\Converter\ConstraintViolationListConverter;
@@ -22,7 +22,7 @@ class Controller extends AbstractController
         private readonly ValidatorInterface               $validator,
         private readonly ResponseJsonFactory              $responseJsonFactory,
         private readonly ConstraintViolationListConverter $constraintViolationListConverter,
-        private readonly BonusCreditAction                $bonusCreditAction,
+        private readonly BonusRollbackAction              $bonusCreditAction,
         private readonly ExceptionConverter               $exceptionConverter,
         private readonly AuthService                      $authService,
     ) {
@@ -35,7 +35,7 @@ class Controller extends AbstractController
             return $this->responseJsonFactory->createFailureResponse(Response::HTTP_UNAUTHORIZED, ['Unauthorized']);
         }
 
-        $input = new BonusChangeDto($userId, $request);
+        $input = new BonusRollbackDto($userId, $request);
 
         if ($auth->getId() !== $input->getUserId()) {
             return $this->responseJsonFactory->createFailureResponse(Response::HTTP_FORBIDDEN, ['Access denied']);

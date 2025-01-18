@@ -13,4 +13,6 @@ interface AdvertisementCreateDataInterface
     public function getToken(): string;
 
     public function getEmail(): string;
+
+    public function getIdempotencyKey(): string;
 }

@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Entity;
 
 use App\Application\Advertisement\Model\AdvertisementModelInterface;
+use App\Application\Advertisement\Model\AdvertisementStatusEnum;
 use App\Infrastructure\Doctrine\Column\CreatedAt;
 use App\Infrastructure\Doctrine\Column\UpdatedAt;
 use App\Infrastructure\Repository\AdvertisementRepository;
@@ -12,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: AdvertisementRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\UniqueConstraint(name: "UNIQ_user", columns: ["user_id"])]
+#[ORM\UniqueConstraint(name: "UNIQ_idempotencyKey", columns: ["idempotency_key"])]
 class Advertisement implements AdvertisementModelInterface
 {
     use CreatedAt;
@@ -33,6 +35,12 @@ class Advertisement implements AdvertisementModelInterface
 
     #[ORM\Column]
     private ?int $userId = null;
+
+    #[ORM\Column(length: 36)]
+    private ?string $idempotencyKey = null;
+
+    #[ORM\Column(enumType: AdvertisementStatusEnum::class)]
+    private ?AdvertisementStatusEnum $status = null;
 
     public function getId(): ?int
     {
@@ -83,6 +91,30 @@ class Advertisement implements AdvertisementModelInterface
     public function setUserId(int $userId): static
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getIdempotencyKey(): string
+    {
+        return $this->idempotencyKey;
+    }
+
+    public function setIdempotencyKey(string $idempotencyKey): static
+    {
+        $this->idempotencyKey = $idempotencyKey;
+
+        return $this;
+    }
+
+    public function getStatus(): AdvertisementStatusEnum
+    {
+        return $this->status;
+    }
+
+    public function setStatus(AdvertisementStatusEnum $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

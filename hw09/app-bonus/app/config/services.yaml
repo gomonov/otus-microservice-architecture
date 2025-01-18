@@ -32,6 +32,10 @@ services:
         arguments:
             $secret: '%env(JWT_SECRET)%'
 
+    App\Application\Bonus\UseCase\BonusDebitAction:
+        arguments:
+            $bonusPercent: '%env(BONUS_PERCENT)%'
+
     App\Infrastructure\Kafka\Consumer\ConsumerRepository:
         arguments:
             - !tagged_iterator kafka.consumer

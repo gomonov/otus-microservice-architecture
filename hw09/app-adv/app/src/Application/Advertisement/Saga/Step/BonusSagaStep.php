@@ -19,10 +19,11 @@ class BonusSagaStep extends AbstractSagaStep
     {
         $advertisementModel = $data->getAdvertisementModel();
 
-        $result = $this->client->debit(
+        $result = $this->client->add(
             $advertisementModel->getCost(),
             $advertisementModel->getUserId(),
-            $data->getToken()
+            $data->getToken(),
+            $data->getIdempotencyKey(),
         );
 
         if (false === $result) {
@@ -37,10 +38,10 @@ class BonusSagaStep extends AbstractSagaStep
     {
         $advertisementModel = $data->getAdvertisementModel();
 
-        $this->client->credit(
-            $advertisementModel->getCost(),
+        $this->client->rollback(
             $advertisementModel->getUserId(),
-            $data->getToken()
+            $data->getToken(),
+            $data->getIdempotencyKey(),
         );
     }
 }

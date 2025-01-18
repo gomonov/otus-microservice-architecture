@@ -1,4 +1,3 @@
-# Пользователь
 user_auth:
     path: /api/v1/auth
     controller: App\UI\User\Controller\Auth\Controller

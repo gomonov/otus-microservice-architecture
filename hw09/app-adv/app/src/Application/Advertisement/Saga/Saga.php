@@ -5,7 +5,7 @@ namespace App\Application\Advertisement\Saga;
 use App\Application\Advertisement\Saga\Step\AbstractSagaStep;
 use App\Application\Advertisement\Saga\Step\BillingSagaStep;
 use App\Application\Advertisement\Saga\Step\BonusSagaStep;
-use App\Application\Advertisement\Saga\Step\OrderSagaStep;
+use App\Application\Advertisement\Saga\Step\AdvertisementSagaStep;
 
 class Saga
 {
@@ -14,7 +14,7 @@ class Saga
     public function __construct(
         BillingSagaStep       $billingSagaStep,
         BonusSagaStep         $bonusSagaStep,
-        OrderSagaStep         $orderSagaStep
+        AdvertisementSagaStep $orderSagaStep
     ) {
         $bonusSagaStep->setNextStep($billingSagaStep);
         $billingSagaStep->setNextStep($orderSagaStep);

@@ -9,7 +9,7 @@ readonly class AdvCreateSagaDto
     public function __construct(
         private AdvertisementModelInterface $advertisementModel,
         private string                      $token,
-        private string                      $email
+        private string                      $idempotencyKey,
     ) {
     }
 
@@ -23,8 +23,8 @@ readonly class AdvCreateSagaDto
         return $this->token;
     }
 
-    public function getEmail(): string
+    public function getIdempotencyKey(): string
     {
-        return $this->email;
+        return $this->idempotencyKey;
     }
 }

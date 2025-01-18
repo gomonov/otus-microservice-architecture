@@ -18,6 +18,10 @@ class AdvertisementCreateDto implements AdvertisementCreateDataInterface
     #[Type("string")]
     private ?string $text;
 
+    #[NotBlank(message: 'Заголовок X-Idempotency-Key не может быть пустым')]
+    #[Type("string")]
+    private ?string $idempotencyKey;
+
     private int $userId;
 
     private string $email;
@@ -33,6 +37,8 @@ class AdvertisementCreateDto implements AdvertisementCreateDataInterface
         $this->userId = $authData->getId();
         $this->token  = $authData->getToken();
         $this->email  = $authData->getEmail();
+
+        $this->idempotencyKey = $request->headers->get('X-Idempotency-Key');
     }
 
     public function getTitle(): string
@@ -58,5 +64,10 @@ class AdvertisementCreateDto implements AdvertisementCreateDataInterface
     public function getEmail(): string
     {
         return $this->email;
+    }
+
+    public function getIdempotencyKey(): string
+    {
+        return $this->idempotencyKey;
     }
 }

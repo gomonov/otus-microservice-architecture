@@ -2,3 +2,13 @@ adv_create:
     path: /api/v1/adv/create
     controller: App\UI\Advertisement\Controller\Create\Controller
     methods: POST
+
+adv_uuid:
+    path: /api/v1/adv/uuid
+    controller: App\UI\Uuid\Controller\Get\Controller
+    methods: GET
+
+healthcheck:
+    path: /health
+    controller: App\UI\HealthCheck\Controller
+    methods: GET

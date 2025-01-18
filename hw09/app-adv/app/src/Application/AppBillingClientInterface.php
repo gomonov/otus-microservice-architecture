@@ -4,7 +4,7 @@ namespace App\Application;
 
 interface AppBillingClientInterface
 {
-    public function pay(int $sum, int $userId, string $token): bool;
+    public function pay(int $sum, int $userId, string $token, string $idempotencyKey): bool;
 
-    public function topUp(int $sum, int $userId, string $token): bool;
+    public function rollback(int $userId, string $token, string $idempotencyKey): bool;
 }

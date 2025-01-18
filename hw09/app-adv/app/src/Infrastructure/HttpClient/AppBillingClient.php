@@ -13,7 +13,7 @@ readonly class AppBillingClient implements AppBillingClientInterface
     ) {
     }
 
-    public function pay(int $sum, int $userId, string $token): bool
+    public function pay(int $sum, int $userId, string $token, string $idempotencyKey): bool
     {
         try {
             $response = $this->appBillingClient->request(
@@ -21,7 +21,7 @@ readonly class AppBillingClient implements AppBillingClientInterface
                 '/api/v1/account/pay/' . $userId,
                 [
                     'json' => ['sum' => $sum],
-                    'headers' => ['X-Auth-Token' => $token],
+                    'headers' => ['X-Auth-Token' => $token, 'X-Idempotency-Key' => $idempotencyKey],
                 ]
             );
 
@@ -33,15 +33,14 @@ readonly class AppBillingClient implements AppBillingClientInterface
         return 200 === $code;
     }
 
-    public function topUp(int $sum, int $userId, string $token): bool
+    public function rollback(int $userId, string $token, string $idempotencyKey): bool
     {
         try {
             $response = $this->appBillingClient->request(
                 'PUT',
-                '/api/v1/account/top-up/' . $userId,
+                '/api/v1/account/rollback/' . $userId,
                 [
-                    'json' => ['sum' => $sum],
-                    'headers' => ['X-Auth-Token' => $token],
+                    'headers' => ['X-Auth-Token' => $token, 'X-Idempotency-Key' => $idempotencyKey],
                 ]
             );
 

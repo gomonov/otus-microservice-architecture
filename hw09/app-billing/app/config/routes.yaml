@@ -13,6 +13,16 @@ account_pay:
     controller: App\UI\Account\Controller\Pay\Controller
     methods: PUT
 
+account_rollback_pay:
+    path: /api/v1/account/rollback/{userId<\d+>}
+    controller: App\UI\Account\Controller\Rollback\Controller
+    methods: PUT
+
+account_uuid:
+    path: /api/v1/account/uuid
+    controller: App\UI\Uuid\Controller\Get\Controller
+    methods: GET
+
 healthcheck:
     path: /health
     controller: App\UI\HealthCheck\Controller

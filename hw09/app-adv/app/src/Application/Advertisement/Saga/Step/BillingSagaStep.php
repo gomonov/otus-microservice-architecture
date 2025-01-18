@@ -19,7 +19,12 @@ class BillingSagaStep extends AbstractSagaStep
     {
         $advertisementModel = $data->getAdvertisementModel();
 
-        $result = $this->client->pay($advertisementModel->getCost(), $advertisementModel->getUserId(), $data->getToken());
+        $result = $this->client->pay(
+            $advertisementModel->getCost(),
+            $advertisementModel->getUserId(),
+            $data->getToken(),
+            $data->getIdempotencyKey(),
+        );
 
         if (false === $result) {
             throw new SagaException('Ошибка выполнения платежа');
@@ -33,12 +38,10 @@ class BillingSagaStep extends AbstractSagaStep
     {
         $advertisementModel = $data->getAdvertisementModel();
 
-        $this->client->topUp(
-            $advertisementModel->getCost(),
+        $this->client->rollback(
             $advertisementModel->getUserId(),
-            $data->getToken()
+            $data->getToken(),
+            $data->getIdempotencyKey(),
         );
-
-
     }
 }

@@ -13,15 +13,15 @@ readonly class AppBonusClient implements AppBonusClientInterface
     ) {
     }
 
-    public function debit(int $sum, int $userId, string $token): bool
+    public function add(int $sum, int $userId, string $token, string $idempotencyKey): bool
     {
         try {
             $response = $this->appBonusClient->request(
                 'PUT',
-                '/api/v1/bonus/debit/' . $userId,
+                '/api/v1/bonus/add/' . $userId,
                 [
                     'json' => ['sum' => $sum],
-                    'headers' => ['X-Auth-Token' => $token],
+                    'headers' => ['X-Auth-Token' => $token, 'X-Idempotency-Key' => $idempotencyKey],
                 ]
             );
 
@@ -33,15 +33,14 @@ readonly class AppBonusClient implements AppBonusClientInterface
         return 200 === $code;
     }
 
-    public function credit(int $sum, int $userId, string $token): bool
+    public function rollback(int $userId, string $token, string $idempotencyKey): bool
     {
         try {
             $response = $this->appBonusClient->request(
                 'PUT',
-                '/api/v1/bonus/credit/' . $userId,
+                '/api/v1/bonus/rollback/' . $userId,
                 [
-                    'json' => ['sum' => $sum],
-                    'headers' => ['X-Auth-Token' => $token],
+                    'headers' => ['X-Auth-Token' => $token, 'X-Idempotency-Key' => $idempotencyKey],
                 ]
             );
 
