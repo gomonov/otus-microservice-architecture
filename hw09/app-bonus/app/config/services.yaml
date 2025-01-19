@@ -32,7 +32,7 @@ services:
         arguments:
             $secret: '%env(JWT_SECRET)%'
 
-    App\Application\Bonus\UseCase\BonusDebitAction:
+    App\Application\Bonus\UseCase\BonusAddAction:
         arguments:
             $bonusPercent: '%env(BONUS_PERCENT)%'
 

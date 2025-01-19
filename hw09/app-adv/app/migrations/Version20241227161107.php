@@ -21,7 +21,7 @@ final class Version20241227161107 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE advertisement (id SERIAL NOT NULL, title VARCHAR(255) NOT NULL, text TEXT NOT NULL, cost INT NOT NULL, user_id INT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_user ON advertisement (user_id)');
+        $this->addSql('CREATE INDEX IDX_user ON advertisement (user_id)');
     }
 
     public function down(Schema $schema): void

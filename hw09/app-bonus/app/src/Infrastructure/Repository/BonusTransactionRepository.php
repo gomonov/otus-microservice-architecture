@@ -22,8 +22,10 @@ class BonusTransactionRepository extends ServiceEntityRepository implements Bonu
     {
         return (int)$this->createQueryBuilder('bt')
             ->select('SUM(bt.value)')
-            ->where(['bt.idempotencyKey' => $idempotencyKey])
-            ->andWhere(['bt.bonus' => $bonusModel])
+            ->andWhere('bt.idempotencyKey = :key')
+            ->setParameter('key', $idempotencyKey)
+            ->andWhere('bt.bonus = :bonus')
+            ->setParameter('bonus', $bonusModel)
             ->getQuery()
             ->getSingleScalarResult();
     }

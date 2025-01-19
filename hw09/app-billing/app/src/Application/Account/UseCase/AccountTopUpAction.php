@@ -37,6 +37,7 @@ readonly class AccountTopUpAction
         }
 
         $sum = $this->accountTransactionRepository->sumByIdempotencyKey($account, $data->getIdempotencyKey());
+
         if ($sum > 0) {
             return $account;
         }

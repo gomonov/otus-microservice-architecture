@@ -22,8 +22,10 @@ class AccountTransactionRepository extends ServiceEntityRepository implements Ac
     {
         return (int)$this->createQueryBuilder('at')
             ->select('SUM(at.value)')
-            ->where(['at.idempotencyKey' => $idempotencyKey])
-            ->andWhere(['at.account' => $accountModel])
+            ->andWhere('at.idempotencyKey = :key')
+            ->setParameter('key', $idempotencyKey)
+            ->andWhere('at.account = :account')
+            ->setParameter('account', $accountModel)
             ->getQuery()
             ->getSingleScalarResult();
     }

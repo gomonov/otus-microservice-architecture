@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c0b99302-21ec-4f4f-be09-34374babc7d7",
+		"_postman_id": "0a3fbe92-2189-420a-acee-32a228e30168",
 		"name": "hw09",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "30626594"
@@ -22,6 +22,18 @@
 						"type": "text/javascript",
 						"packages": {}
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"userPostfix\", _.random(1, 500000));",
+							"pm.collectionVariables.set(\"balance\", 0);",
+							"pm.collectionVariables.set(\"bonus\", 0);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
 				}
 			],
 			"request": {
@@ -29,7 +41,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"phone\": 7910000000,\n  \"username\": \"username\",\n  \"password\": \"password\",\n  \"firstName\": \"firstName\",\n  \"lastName\": \"lastName\",\n  \"email\": \"email@mail.ru1\"\n}",
+					"raw": "{\n  \"phone\": 7910000000,\n  \"username\": \"username-{{userPostfix}}\",\n  \"password\": \"password\",\n  \"firstName\": \"firstName\",\n  \"lastName\": \"lastName\",\n  \"email\": \"email-{{userPostfix}}@mail.ru1\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -61,7 +73,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"username\",\n  \"password\": \"password\"\n}",
+					"raw": "{\n  \"username\": \"username-{{userPostfix}}\",\n  \"password\": \"password\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -119,7 +131,7 @@
 							"function sleep(ms) {",
 							"  return new Promise(resolve => setTimeout(resolve, ms));",
 							"}",
-							"sleep(300);"
+							"sleep(1000);"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -162,7 +174,7 @@
 							"function sleep(ms) {",
 							"  return new Promise(resolve => setTimeout(resolve, ms));",
 							"}",
-							"sleep(300);"
+							"sleep(1000);"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -179,6 +191,46 @@
 					}
 				],
 				"url": "{{bonusBaseUrl}}/api/v1/bonus/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Get uuid for top up",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check account\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.collectionVariables.set(\"uuid\", pm.response.json().data.uuid);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{billingBaseUrl}}/api/v1/account/uuid"
 			},
 			"response": []
 		},
@@ -202,7 +254,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"pm.collectionVariables.set(\"balance\", pm.collectionVariables.get(\"balance\") + 500);"
+							"pm.collectionVariables.set(\"balance\", Number(pm.collectionVariables.get(\"balance\")) + 500);"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -216,6 +268,11 @@
 						"key": "X-Auth-Token",
 						"value": "{{token}}",
 						"type": "text"
+					},
+					{
+						"key": "X-Idempotency-Key",
+						"value": "{{uuid}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -228,6 +285,199 @@
 					}
 				},
 				"url": "{{billingBaseUrl}}/api/v1/account/top-up/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Top up account 500 (double)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful top up account \", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data.balance).to.eql(~~pm.collectionVariables.get('balance'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-Idempotency-Key",
+						"value": "{{uuid}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sum\": 500\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{billingBaseUrl}}/api/v1/account/top-up/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Rollback account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful top up account \", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data.balance).to.eql(~~pm.collectionVariables.get('balance'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"balance\", Number(pm.collectionVariables.get(\"balance\")) - 500);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-Idempotency-Key",
+						"value": "{{uuid}}",
+						"type": "text"
+					}
+				],
+				"url": "{{billingBaseUrl}}/api/v1/account/rollback/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Top up account 500",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful top up account \", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data.balance).to.eql(~~pm.collectionVariables.get('balance'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"balance\", Number(pm.collectionVariables.get(\"balance\")) + 500);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-Idempotency-Key",
+						"value": "{{uuid}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sum\": 500\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{billingBaseUrl}}/api/v1/account/top-up/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Get uuid for adv",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check account\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.collectionVariables.set(\"uuid\", pm.response.json().data.uuid);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{advBaseUrl}}/api/v1/adv/uuid"
 			},
 			"response": []
 		},
@@ -252,7 +502,7 @@
 						"exec": [
 							"pm.collectionVariables.set(\"advText\", \"test \".repeat(60));",
 							"pm.collectionVariables.set(\"balance\", pm.collectionVariables.get(\"balance\") - pm.collectionVariables.get(\"advText\").length);",
-							"pm.collectionVariables.set(\"bonus\", pm.collectionVariables.get(\"bonus\") + pm.collectionVariables.get(\"advText\").length);"
+							"pm.collectionVariables.set(\"bonus\", pm.collectionVariables.get(\"bonus\") + pm.collectionVariables.get(\"advText\").length * 0.1);"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -265,6 +515,11 @@
 					{
 						"key": "X-Auth-Token",
 						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-Idempotency-Key",
+						"value": "{{uuid}}",
 						"type": "text"
 					}
 				],
@@ -312,7 +567,130 @@
 			"response": []
 		},
 		{
-			"name": "Check bonus 300",
+			"name": "Check bonus 30",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check bonus\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data.bonus).to.eql(~~pm.collectionVariables.get('bonus'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{bonusBaseUrl}}/api/v1/bonus/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Create advertisement (300) double",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Sucessfull create advertisement\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"advText\", \"test \".repeat(60));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-Idempotency-Key",
+						"value": "{{uuid}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Заголовок объявления\",\n  \"text\": \"{{advText}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{advBaseUrl}}/api/v1/adv/create"
+			},
+			"response": []
+		},
+		{
+			"name": "Check account 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check account\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().data.balance).to.eql(~~pm.collectionVariables.get('balance'));",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{billingBaseUrl}}/api/v1/account/{{userId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Check bonus 30",
 			"event": [
 				{
 					"listen": "test",
@@ -382,6 +760,46 @@
 			"response": []
 		},
 		{
+			"name": "Get uuid for adv",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check account\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.collectionVariables.set(\"uuid\", pm.response.json().data.uuid);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": "{{advBaseUrl}}/api/v1/adv/uuid"
+			},
+			"response": []
+		},
+		{
 			"name": "Create advertisement (300 error)",
 			"event": [
 				{
@@ -413,6 +831,11 @@
 					{
 						"key": "X-Auth-Token",
 						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-Idempotency-Key",
+						"value": "{{uuid}}",
 						"type": "text"
 					}
 				],
@@ -460,7 +883,7 @@
 			"response": []
 		},
 		{
-			"name": "Check bonus 300",
+			"name": "Check bonus 30",
 			"event": [
 				{
 					"listen": "test",
@@ -579,6 +1002,11 @@
 			"type": "string"
 		},
 		{
+			"key": "bonusBaseUrl",
+			"value": "http://arch.homework/app-bonus",
+			"type": "string"
+		},
+		{
 			"key": "userId",
 			"value": "",
 			"type": "string"
@@ -598,13 +1026,18 @@
 			"type": "string"
 		},
 		{
-			"key": "bonusBaseUrl",
-			"value": "http://arch.homework/app-bonus",
+			"key": "bonus",
+			"value": "0",
 			"type": "string"
 		},
 		{
-			"key": "bonus",
-			"value": "0",
+			"key": "userPostfix",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "uuid",
+			"value": "",
 			"type": "string"
 		}
 	]

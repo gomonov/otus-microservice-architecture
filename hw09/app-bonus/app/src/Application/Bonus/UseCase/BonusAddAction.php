@@ -44,7 +44,7 @@ readonly class BonusAddAction
             return $bonus;
         }
 
-        $add = (int)round($data->getSum() * $this->bonusPercent);
+        $add = (int)round($data->getSum() * $this->bonusPercent / 100);
 
         $transaction = $this->bonusTransactionFactory->create();
         $transaction->setBonus($bonus);

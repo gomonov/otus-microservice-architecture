@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AdvertisementRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ORM\UniqueConstraint(name: "UNIQ_user", columns: ["user_id"])]
+#[ORM\Index(name: "IDX_user", columns: ["user_id"])]
 #[ORM\UniqueConstraint(name: "UNIQ_idempotencyKey", columns: ["idempotency_key"])]
 class Advertisement implements AdvertisementModelInterface
 {
