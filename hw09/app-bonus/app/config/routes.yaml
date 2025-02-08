@@ -1,0 +1,19 @@
+bonus_get:
+    path: /api/v1/bonus/{userId<\d+>}
+    controller: App\UI\Bonus\Controller\Get\Controller
+    methods: GET
+
+bonus_add:
+    path: /api/v1/bonus/add/{userId<\d+>}
+    controller: App\UI\Bonus\Controller\Add\Controller
+    methods: PUT
+
+bonus_rollback:
+    path: /api/v1/bonus/rollback/{userId<\d+>}
+    controller: App\UI\Bonus\Controller\Rollback\Controller
+    methods: PUT
+
+healthcheck:
+    path: /health
+    controller: App\UI\HealthCheck\Controller
+    methods: GET
