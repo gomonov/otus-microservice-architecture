@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Values.app.name }}-consumer-account-create
+spec:
+  selector:
+    matchLabels:
+      name: {{ .Values.app.name }}-consumer-account-create
+  template:
+    metadata:
+      labels:
+        name: {{ .Values.app.name }}-consumer-account-create
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}-consumer-account-create
+          imagePullPolicy: Always
+          image: "{{ .Values.app.image }}:{{ .Values.app.tag }}"
+          command: [ '/bin/sh', '-c', 'composer install --no-dev --no-scripts && bin/console cache:clear && bin/console kafka:consumer:start account.create' ]
+          volumeMounts:
+            - name: app-billing-env-config
+              mountPath: '/var/www/.env.local'
+              subPath: '.env.local'
+      volumes:
+        - name: app-billing-env-config
+          configMap:
+            name: {{ .Values.app.name }}-config-map
+
+      restartPolicy: Always

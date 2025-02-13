@@ -1,0 +1,58 @@
+adv_create:
+    path: /api/v1/adv/create
+    controller: App\UI\Advertisement\Controller\Create\Controller
+    methods: POST
+
+adv_moder:
+    path: /api/v1/adv/moderate/{advId<\d+>}
+    controller: App\UI\Advertisement\Controller\Moderate\Controller
+    methods: PUT
+
+adv_publish:
+    path: /api/v1/adv/publish/{advId<\d+>}
+    controller: App\UI\Advertisement\Controller\Publish\Controller
+    methods: PUT
+
+adv_un_publish:
+    path: /api/v1/adv/un-publish/{advId<\d+>}
+    controller: App\UI\Advertisement\Controller\UnPublish\Controller
+    methods: PUT
+
+adv_archive:
+    path: /api/v1/adv/archive/{advId<\d+>}
+    controller: App\UI\Advertisement\Controller\Archive\Controller
+    methods: PUT
+
+adv_un_archive:
+    path: /api/v1/adv/un-archive/{advId<\d+>}
+    controller: App\UI\Advertisement\Controller\UnArchive\Controller
+    methods: PUT
+
+adv_edit:
+    path: /api/v1/adv/edit/{advId<\d+>}
+    controller: App\UI\Advertisement\Controller\Edit\Controller
+    methods: PUT
+
+adv_get_all:
+    path: /api/v1/adv/get-all
+    controller: App\UI\Advertisement\Controller\GetAll\Controller
+    methods: GET
+
+adv_get_user:
+    path: /api/v1/adv/get-user
+    controller: App\UI\Advertisement\Controller\GetUser\Controller
+    methods: GET
+
+adv_uuid:
+    path: /api/v1/adv/uuid
+    controller: App\UI\Uuid\Controller\Get\Controller
+    methods: GET
+
+metrics:
+    path: /metrics
+    controller: Artprima\PrometheusMetricsBundle\Controller\MetricsController::prometheus
+
+healthcheck:
+    path: /health
+    controller: App\UI\HealthCheck\Controller
+    methods: GET

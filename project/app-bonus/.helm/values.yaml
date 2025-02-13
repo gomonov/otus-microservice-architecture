@@ -1,0 +1,42 @@
+app:
+  name: app-bonus
+  replicaCount: 3
+  image: ygomonov/otus-app-bonus
+  tag: project
+  appSecret: f975d3f7d9081bc041a6bd9d66175e38
+  postgresql:
+    username: "user"
+    password: "!ChangeMe!"
+    port: "5432"
+    db: app-bonus
+  redis:
+    port: 6379
+    password: "redis-pass"
+    session_db: 10
+  portName: app-bonus-port
+  port: 8006
+  billingHost: http://app-billing-service.app.svc.cluster.local
+
+service:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: app-bonus-port
+
+ingress:
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/auth-url: "http://app-auth-service.app.svc.cluster.local/api/v1/auth"
+    nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Token"
+  hosts:
+    - host: arch.homework
+      paths:
+        - path: /app-bonus(/|$)(.*)
+          pathType: ImplementationSpecific
+          port: 80
+
+migrationJob:
+  backoffLimit: 5
+  ttlSecondsAfterFinished: 60
