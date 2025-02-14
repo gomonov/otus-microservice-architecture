@@ -280,20 +280,20 @@
 					"name": "Создать объявление",
 					"event": [
 						{
-							"listen": "test",
+							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set(\"advId\", pm.response.json().data.id);"
+									"pm.collectionVariables.set(\"advText\", \"test \".repeat(1));"
 								],
 								"type": "text/javascript",
 								"packages": {}
 							}
 						},
 						{
-							"listen": "prerequest",
+							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.collectionVariables.set(\"advText\", \"test \".repeat(1));"
+									"pm.collectionVariables.set(\"advId\", pm.response.json().data.id);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -348,16 +348,10 @@
 					],
 					"request": {
 						"method": "PUT",
-						"header": [
-							{
-								"key": "X-Idempotency-Key",
-								"value": "{{uuid}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"Заголовок объявления\",\n  \"text\": \"{{advText}}\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -495,13 +489,7 @@
 					],
 					"request": {
 						"method": "PUT",
-						"header": [
-							{
-								"key": "X-Idempotency-Key",
-								"value": "{{uuid}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "",
@@ -541,13 +529,7 @@
 					],
 					"request": {
 						"method": "PUT",
-						"header": [
-							{
-								"key": "X-Idempotency-Key",
-								"value": "{{uuid}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "",
@@ -587,13 +569,7 @@
 					],
 					"request": {
 						"method": "PUT",
-						"header": [
-							{
-								"key": "X-Idempotency-Key",
-								"value": "{{uuid}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "",
