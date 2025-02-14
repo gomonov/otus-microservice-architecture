@@ -1,0 +1,36 @@
+app:
+  name: app-moder
+  replicaCount: 3
+  image: ygomonov/otus-app-moder
+  tag: project
+  appSecret: f975d3f7d9081bc041a6bd9d66175e38
+  redis:
+    port: 6379
+    password: "redis-pass"
+    db: 5
+  portName: app-moder-port
+  port: 8007
+
+service:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: app-moder-port
+
+ingress:
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/auth-url: "http://app-auth-service.app.svc.cluster.local/api/v1/auth"
+    nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Token"
+  hosts:
+    - host: arch.homework
+      paths:
+        - path: /app-moder(/|$)(.*)
+          pathType: ImplementationSpecific
+          port: 80
+
+migrationJob:
+  backoffLimit: 5
+  ttlSecondsAfterFinished: 60

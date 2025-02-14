@@ -1,0 +1,716 @@
+{
+	"info": {
+		"_postman_id": "bc328acf-5633-4482-8bda-f39ff3dbba66",
+		"name": "project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "30626594"
+	},
+	"item": [
+		{
+			"name": "Полльзователь",
+			"item": [
+				{
+					"name": "Регистрация",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"userId\", pm.response.json().data.id);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"userPostfix\", _.random(1, 500000));",
+									"pm.collectionVariables.set(\"balance\", 0);",
+									"pm.collectionVariables.set(\"bonus\", 0);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\": 7910000000,\n  \"username\": \"username-{{userPostfix}}\",\n  \"password\": \"password\",\n  \"firstName\": \"firstName\",\n  \"lastName\": \"lastName\",\n  \"email\": \"email-{{userPostfix}}@mail.ru1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{userBaseUrl}}/api/v1/user/create"
+					},
+					"response": []
+				},
+				{
+					"name": "Аутентификация",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"username-{{userPostfix}}\",\n  \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{authBaseUrl}}/api/v1/login"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Денежный счёт",
+			"item": [
+				{
+					"name": "Получить ключ идемпотентности для пополнения",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"uuid\", pm.response.json().data.uuid);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{billingBaseUrl}}/api/v1/account/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "Пополнить баланс",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Idempotency-Key",
+								"value": "{{uuid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sum\": 500\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{billingBaseUrl}}/api/v1/account/top-up/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Получить баланс",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{billingBaseUrl}}/api/v1/account/{{userId}}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Бонусный счёт",
+			"item": [
+				{
+					"name": "Получить количество бонусов",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{bonusBaseUrl}}/api/v1/bonus/{{userId}}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Объявления",
+			"item": [
+				{
+					"name": "Получить все опубликованные объявления",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{advBaseUrl}}/api/v1/adv/get-all"
+					},
+					"response": []
+				},
+				{
+					"name": "Получить ключ идемпотентности для создания объявления",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{advBaseUrl}}/api/v1/adv/uuid"
+					},
+					"response": []
+				},
+				{
+					"name": "Создать объявление",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"advText\", \"test \".repeat(1));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"advId\", pm.response.json().data.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Idempotency-Key",
+								"value": "{{uuid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Заголовок объявления\",\n  \"text\": \"{{advText}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{advBaseUrl}}/api/v1/adv/create"
+					},
+					"response": []
+				},
+				{
+					"name": "Отправить объявление на модерацию",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{advBaseUrl}}/api/v1/adv/moderate/{{advId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Получить объявления пользователя",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{advBaseUrl}}/api/v1/adv/get-user"
+					},
+					"response": []
+				},
+				{
+					"name": "Редактировать объявление",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"advText\", \"test \".repeat(60));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Idempotency-Key",
+								"value": "{{uuid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Заголовок объявления\",\n  \"text\": \"{{advText}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{advBaseUrl}}/api/v1/adv/edit/{{advId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Публикация объявления",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Idempotency-Key",
+								"value": "{{uuid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{advBaseUrl}}/api/v1/adv/publish/{{advId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Снять с публикации",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{advBaseUrl}}/api/v1/adv/un-publish/{{advId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Архивировать",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{advBaseUrl}}/api/v1/adv/archive/{{advId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Разархивировать",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{advBaseUrl}}/api/v1/adv/un-archive/{{advId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Метрики",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{advBaseUrl}}/metrics"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Уведомления",
+			"item": [
+				{
+					"name": "Получить уведомления пользователя",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{notifyBaseUrl}}/api/v1/notification/{{userId}}"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "userBaseUrl",
+			"value": "http://arch.homework/app-user",
+			"type": "string"
+		},
+		{
+			"key": "authBaseUrl",
+			"value": "http://arch.homework/app-auth",
+			"type": "string"
+		},
+		{
+			"key": "billingBaseUrl",
+			"value": "http://arch.homework/app-billing",
+			"type": "string"
+		},
+		{
+			"key": "advBaseUrl",
+			"value": "http://arch.homework/app-adv",
+			"type": "string"
+		},
+		{
+			"key": "notifyBaseUrl",
+			"value": "http://arch.homework/app-notify",
+			"type": "string"
+		},
+		{
+			"key": "bonusBaseUrl",
+			"value": "http://arch.homework/app-bonus",
+			"type": "string"
+		},
+		{
+			"key": "moderBaseUrl",
+			"value": "http://arch.homework/app-moder",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "advId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "advText",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userPostfix",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "uuid",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "balance",
+			"value": ""
+		},
+		{
+			"key": "bonus",
+			"value": ""
+		}
+	]
+}

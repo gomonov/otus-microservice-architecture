@@ -1,0 +1,70 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    _instanceof:
+        App\Application\Kafka\ConsumerInterface:
+            tags: [ 'kafka.consumer' ]
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/**/{Dto,ValueObject,Enum,Model,Entity,Exception,Contract,Migrations}/*.php'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    App\UI\Service\Auth\AuthService:
+        arguments:
+            $secret: '%env(JWT_SECRET)%'
+
+    App\Infrastructure\Kafka\Consumer\ConsumerRepository:
+        arguments:
+            - !tagged_iterator kafka.consumer
+
+    App\Infrastructure\Kafka\Configuration\ConfigurationManager:
+        arguments:
+            $config:
+                flush.timeout_sec: 3
+                flush.retries: 3
+                topic:
+                    message.timeout.ms: 3000
+                    request.timeout.ms: 5000
+                consumer:
+                    socket.timeout.ms: 5000
+                    metadata.broker.list: '%env(KAFKA_BROKER_LIST)%'
+                    security.protocol: 'plaintext'
+                    topic.metadata.refresh.interval.ms: 60000
+                    allow.auto.create.topics: 'true'
+                    auto.offset.reset: 'earliest'
+                producer:
+                    metadata.broker.list: '%env(KAFKA_BROKER_LIST)%'
+                    security.protocol: 'plaintext'
+                    enable.idempotence: 'true'
+                    message.send.max.retries: 2
+                    topic.metadata.refresh.interval.ms: 60000
+                    retry.backoff.ms: 500
+                    socket.timeout.ms: 5000
+
+    App\Infrastructure\HttpClient\AppUserClient:
+        arguments:
+            $token: '%env(SERVICE_TOKEN)%'
+
+    App\UI\Notification\Consumer\NotificationCreateConsumer:
+        arguments:
+            $topic: '%env(NOTIFY_TOPIC)%'
+            $group: '%env(NOTIFICATION_CREATE_GROUP)%'

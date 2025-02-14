@@ -1,0 +1,13 @@
+framework:
+  http_client:
+    default_options:
+      http_version: '2.0'
+    scoped_clients:
+      app.billing.client:
+        base_uri: '%env(APP_BILLING_HOST)%'
+        headers:
+          Content-Type: 'application/json'
+      app.bonus.client:
+        base_uri: '%env(APP_BONUS_HOST)%'
+        headers:
+          Content-Type: 'application/json'

@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.app.name }}-bonus-exchange
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: {{ .Values.app.name }}-bonus-exchange
+              imagePullPolicy: Always
+              image: "{{ .Values.app.image }}:{{ .Values.app.tag }}"
+              command: [ '/bin/sh', '-c', 'composer install --no-dev --no-scripts && bin/console cache:clear && bin/console bonus:exchange' ]
+              volumeMounts:
+                - name: app-bonus-env-config
+                  mountPath: '/var/www/.env.local'
+                  subPath: '.env.local'
+          volumes:
+            - name: app-bonus-env-config
+              configMap:
+                name: {{ .Values.app.name }}-config-map
+
+          restartPolicy: OnFailure
+      ttlSecondsAfterFinished: {{ .Values.migrationJob.ttlSecondsAfterFinished }}

@@ -1,0 +1,41 @@
+app:
+  name: app-user
+  replicaCount: 3
+  image: ygomonov/otus-app-user
+  tag: project
+  appSecret: f975d3f7d9081bc041a6bd9d66175e38
+  postgresql:
+    username: "user"
+    password: "!ChangeMe!"
+    port: "5432"
+    db: app-user
+  redis:
+    port: 6379
+    password: "redis-pass"
+    session_db: 10
+  portName: app-user-port
+  port: 8001
+
+service:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: app-user-port
+
+ingress:
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/auth-url: "http://app-auth-service.app.svc.cluster.local/api/v1/auth"
+    nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Token"
+  hosts:
+    - host: arch.homework
+      paths:
+        - path: /app-user(/|$)(.*)
+          pathType: ImplementationSpecific
+          port: 80
+
+migrationJob:
+  backoffLimit: 5
+  ttlSecondsAfterFinished: 60
